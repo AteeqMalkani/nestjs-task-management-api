@@ -1,968 +1,422 @@
 # NestJS Task Management API
 
-A beginner-friendly REST API built with **NestJS** and **TypeScript** for managing users and their tasks.
+A backend REST API built with **NestJS** for user authentication and task management.
 
-This project was built to learn and demonstrate important backend development concepts such as:
+## Portfolio Project
 
-- REST APIs
+This project demonstrates my ability to build and work with **NestJS REST APIs**, including:
+
+- Authentication with JWT
+- Authorization and user-specific resource access
 - CRUD operations
-- DTOs
+- DTO-based request validation
+- Password hashing with bcrypt
+- HTTP exception handling
+- Swagger API documentation
+- Environment-based configuration
+- Clean backend project structure
+
+## Run the Project
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/AteeqMalkani/nestjs-task-management-api.git
+cd nestjs-task-management-api
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file in the project root:
+
+```env
+JWT_SECRET=your-jwt-secret-here
+JWT_EXPIRES_IN=1h
+```
+
+### 4. Start the development server
+
+```bash
+npm run start:dev
+```
+
+The API will be available at:
+
+```text
+http://localhost:3000
+```
+
+## Swagger API Documentation
+
+Interactive API documentation is available at:
+
+```text
+http://localhost:3000/api
+```
+
+Swagger allows you to explore the endpoints, provide request data, authenticate with a JWT, and test the API directly from the browser.
+
+### Authentication in Swagger
+
+1. Register a user using `POST /users`.
+2. Login using `POST /auth/login`.
+3. Copy the returned `access_token`.
+4. Click **Authorize** in Swagger.
+5. Enter:
+
+```text
+Bearer YOUR_ACCESS_TOKEN
+```
+
+6. You can now test the protected endpoints.
+
+---
+
+# Project Overview
+
+This project is a REST API for managing users and tasks.
+
+The API currently provides:
+
+- User registration and management
+- JWT-based authentication
+- Password hashing
+- Protected endpoints
+- Task creation and management
+- User-specific task ownership
 - Request validation
 - Response DTOs
-- JWT authentication
-- Password hashing
-- Authentication guards
-- User-based authorization
-- Swagger API documentation
-- Environment variables
-- Clean NestJS project structure
+- Swagger documentation
 
-> **Current status:** Core API functionality is complete. The project currently uses in-memory storage, so data is reset whenever the server restarts. A database layer can be added later.
+## Tech Stack
 
----
+- **NestJS**
+- **TypeScript**
+- **JWT**
+- **Passport**
+- **bcrypt**
+- **class-validator**
+- **class-transformer**
+- **Swagger / OpenAPI**
+- **REST API**
 
-## Table of Contents
-
-- [What is this project?](#what-is-this-project)
-- [What is an API?](#what-is-an-api)
-- [What is REST?](#what-is-rest)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [How the API Works](#how-the-api-works)
-- [Authentication](#authentication)
-- [Authorization and Task Ownership](#authorization-and-task-ownership)
-- [DTOs](#dtos)
-- [Validation](#validation)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Swagger Documentation](#swagger-documentation)
-- [API Endpoints](#api-endpoints)
-- [Example API Flow](#example-api-flow)
-- [Testing](#testing)
-- [Current Limitation](#current-limitation)
-- [Future Improvements](#future-improvements)
-- [What I Learned](#what-i-learned)
-
----
-
-# What is this project?
-
-This project is a **Task Management REST API**.
-
-A user can:
-
-1. Create an account
-2. Log in
-3. Receive a JWT access token
-4. Create tasks
-5. View their tasks
-6. View an individual task
-7. Update a task
-8. Mark a task as completed
-9. Delete a task
-
-Each task belongs to the user who created it.
-
-For example:
-
-```text
-Ateeq
- ├── Learn NestJS
- ├── Build API
- └── Study JWT
-
-Ali
- ├── Complete assignment
- └── Submit project
-```
-
-Ateeq cannot access Ali's tasks, and Ali cannot access Ateeq's tasks.
-
----
-
-# What is an API?
-
-API stands for **Application Programming Interface**.
-
-An API allows different applications to communicate with each other.
-
-For example:
-
-```text
-Frontend
-   |
-   | HTTP Request
-   ↓
-NestJS API
-   |
-   | Process request
-   ↓
-Service
-   |
-   ↓
-Data
-   |
-   ↓
-HTTP Response
-   |
-   ↓
-Frontend
-```
-
-The frontend does not need to know how the backend stores or processes the data. It simply communicates with the API.
-
----
-
-# What is REST?
-
-REST is a common way of designing APIs using HTTP.
-
-This project uses standard HTTP methods.
-
-| Method   | Purpose     | Example            |
-| -------- | ----------- | ------------------ |
-| `GET`    | Read data   | Get all tasks      |
-| `POST`   | Create data | Create a task      |
-| `PATCH`  | Update data | Mark task complete |
-| `DELETE` | Delete data | Delete a task      |
-
-For example:
-
-```http
-GET /tasks
-```
-
-means:
-
-> Give me the tasks available to me.
-
-While:
-
-```http
-POST /tasks
-```
-
-means:
-
-> Create a new task.
-
----
-
-# Features
-
-## User Management
-
-- Create users
-- Get all users
-- Get a user by ID
-- Update users
-- Delete users
-- Prevent duplicate email addresses
-- Hash passwords before storing them
-- Never return passwords in API responses
-
-## Authentication
-
-- Login using email and password
-- Password verification using bcrypt
-- JWT access tokens
-- JWT strategy using Passport
-- Protected routes
-
-## Task Management
-
-- Create tasks
-- Get user's tasks
-- Get a single task
-- Update tasks
-- Mark tasks as completed
-- Delete tasks
-- Tasks automatically belong to the authenticated user
-
-## Validation
-
-Incoming requests are validated using:
-
-- `class-validator`
-- `class-transformer`
-- NestJS `ValidationPipe`
-
-## API Documentation
-
-Swagger provides an interactive API documentation page where endpoints can be tested directly from a browser.
-
----
-
-# Tech Stack
-
-| Technology        | Purpose                       |
-| ----------------- | ----------------------------- |
-| NestJS            | Backend framework             |
-| TypeScript        | Programming language          |
-| Node.js           | JavaScript runtime            |
-| Passport          | Authentication framework      |
-| JWT               | Authentication tokens         |
-| bcrypt            | Password hashing              |
-| class-validator   | Request validation            |
-| class-transformer | Data transformation           |
-| Swagger           | API documentation and testing |
-| npm               | Package management            |
-
----
-
-# Project Structure
+## Project Structure
 
 ```text
 src/
-│
 ├── auth/
 │   ├── dto/
-│   │   └── login.dto.ts
-│   │
 │   ├── guards/
-│   │   └── jwt-auth.guard.ts
-│   │
 │   ├── strategies/
-│   │   └── jwt.strategy.ts
-│   │
 │   ├── auth.controller.ts
-│   ├── auth.service.ts
-│   └── auth.module.ts
-│
-├── users/
-│   ├── dto/
-│   │   ├── create-user.dto.ts
-│   │   ├── update-user.dto.ts
-│   │   └── user-response.dto.ts
-│   │
-│   ├── entities/
-│   │   └── user.entity.ts
-│   │
-│   ├── users.controller.ts
-│   ├── users.service.ts
-│   └── users.module.ts
+│   ├── auth.module.ts
+│   └── auth.service.ts
 │
 ├── tasks/
 │   ├── dto/
-│   │   ├── create-task.dto.ts
-│   │   ├── update-task.dto.ts
-│   │   └── task-response.dto.ts
-│   │
 │   ├── entities/
-│   │   └── task.entity.ts
-│   │
 │   ├── tasks.controller.ts
-│   ├── tasks.service.ts
-│   └── tasks.module.ts
+│   ├── tasks.module.ts
+│   └── tasks.service.ts
+│
+├── users/
+│   ├── dto/
+│   ├── entities/
+│   ├── users.controller.ts
+│   ├── users.module.ts
+│   └── users.service.ts
 │
 ├── app.module.ts
 └── main.ts
 ```
 
----
-
 # How the API Works
 
-NestJS separates responsibilities into different parts.
-
-A simplified request flow looks like this:
+The application follows a typical NestJS request flow:
 
 ```text
-HTTP Request
-     |
-     ↓
+Client
+  ↓
 Controller
-     |
-     ↓
+  ↓
 DTO Validation
-     |
-     ↓
+  ↓
 Guard / Authentication
-     |
-     ↓
+  ↓
 Service
-     |
-     ↓
+  ↓
 Data
-     |
-     ↓
+  ↓
 Response DTO
-     |
-     ↓
-HTTP Response
+  ↓
+Client
 ```
 
-## Controller
-
-The controller handles HTTP requests.
-
-For example:
-
-```text
-POST /tasks
-```
-
-The controller receives the request and passes the required information to the service.
-
----
-
-## Service
-
-The service contains the application logic.
-
-For example:
-
-```text
-Create task
-     ↓
-Get logged-in user's ID
-     ↓
-Create task with that user ID
-     ↓
-Store task
-     ↓
-Return task
-```
-
----
-
-## Entity
-
-An entity represents the internal structure of our data.
-
-Example:
-
-```ts
-export class Task {
-  id: number;
-  title: string;
-  description?: string;
-  completed: boolean;
-  userId: number;
-  createdAt: Date;
-}
-```
-
----
+Controllers handle incoming HTTP requests, services contain application logic, DTOs define and validate incoming data, and response DTOs control the data returned to the client.
 
 # Authentication
 
-Authentication answers:
-
-> **Who are you?**
-
-This project uses **JWT authentication**.
+Authentication is implemented using **JWT access tokens**.
 
 The login flow is:
 
 ```text
-User
-  |
-  | Email + Password
-  ↓
 POST /auth/login
-  |
-  ↓
-Find User
-  |
-  ↓
-Compare Password
-  |
-  ↓
+       ↓
+Find user by email
+       ↓
+Compare password with bcrypt
+       ↓
 Generate JWT
-  |
-  ↓
-Return Access Token
+       ↓
+Return access_token
 ```
 
-Example response:
+Protected endpoints require the token in the `Authorization` header:
 
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIs..."
-}
+```text
+Authorization: Bearer <access_token>
 ```
 
-The frontend/client then sends this token when accessing protected endpoints.
+## Authorization
 
-Example:
+Authentication answers:
 
-```http
-Authorization: Bearer <JWT_TOKEN>
-```
+> Who are you?
 
----
+Authorization answers:
 
-# Authorization and Task Ownership
+> Are you allowed to access this resource?
 
-Authentication and authorization are different concepts.
+Tasks are associated with the authenticated user's ID.
 
-### Authentication
+The API obtains the user ID from the JWT instead of trusting a `userId` supplied by the client.
 
-> Who is this user?
-
-JWT tells us that.
-
-### Authorization
-
-> Is this user allowed to access this resource?
-
-Our task ownership logic handles this.
-
-When a user creates a task, the client does **not** send:
-
-```json
-{
-  "title": "Learn NestJS",
-  "userId": 5
-}
-```
-
-Instead, the backend gets the user ID from the authenticated JWT:
+For example:
 
 ```text
 JWT
  ↓
 JwtStrategy
  ↓
-req.user
- ↓
 req.user.userId
+ ↓
+TasksService
+ ↓
+Only access tasks belonging to that user
 ```
 
-The task is then created with that ID.
+This prevents one authenticated user from directly accessing another user's tasks.
 
-For example:
+# DTOs and Validation
+
+DTOs are used to define and validate incoming request data.
+
+For example, creating a task validates:
+
+- Title is required
+- Title must be a string
+- Title has a maximum length
+- Description is optional
+- Description must be a string when provided
+- Description has a maximum length
+
+Global validation is configured using NestJS `ValidationPipe`.
+
+The application also uses:
 
 ```text
-Logged-in user ID: 1
-
-Create task
-     ↓
-Task.userId = 1
+whitelist: true
+forbidNonWhitelisted: true
+transform: true
 ```
 
-When retrieving a task, the service checks both:
+This helps keep incoming request data controlled and predictable.
+
+# Response DTOs
+
+The API uses separate response DTOs rather than returning internal entities directly.
+
+For example, the user response does not expose the user's hashed password.
+
+Response transformation uses `class-transformer` with:
 
 ```text
-task.id === requested ID
-
-AND
-
-task.userId === logged-in user's ID
+excludeExtraneousValues: true
 ```
 
-Therefore, a user cannot access another user's task simply by changing the task ID.
-
----
-
-# DTOs
-
-DTO stands for **Data Transfer Object**.
-
-DTOs define the structure of data that enters or leaves the API.
-
-This project uses separate DTOs for different purposes.
-
-## Request DTO
-
-Example:
-
-```text
-CreateTaskDto
-```
-
-It defines what the client is allowed to send.
-
-```json
-{
-  "title": "Learn NestJS",
-  "description": "Complete authentication"
-}
-```
-
----
-
-## Response DTO
-
-Example:
-
-```text
-TaskResponseDto
-```
-
-It defines what the API returns.
-
-This is useful because the internal entity may contain fields that should not be exposed.
-
-For users, this is especially important because the internal user object contains a password hash, while the API response does not.
-
----
-
-# Validation
-
-The API uses NestJS's global `ValidationPipe`.
-
-Configured in:
-
-```text
-src/main.ts
-```
-
-with:
-
-```ts
-new ValidationPipe({
-  whitelist: true,
-  forbidNonWhitelisted: true,
-  transform: true,
-});
-```
-
-### `whitelist`
-
-Removes properties that aren't allowed by the DTO.
-
-### `forbidNonWhitelisted`
-
-Instead of silently accepting unexpected properties, the API rejects them.
-
-### `transform`
-
-Allows NestJS to transform incoming values when appropriate.
-
----
-
-# Getting Started
-
-## 1. Clone the repository
-
-```bash
-git clone <your-repository-url>
-```
-
-Then enter the project:
-
-```bash
-cd nestjs-task-management-api
-```
-
----
-
-## 2. Install dependencies
-
-```bash
-npm install
-```
-
----
-
-## 3. Create the environment file
-
-Create:
-
-```text
-.env
-```
-
-in the project root.
-
-Example:
-
-```env
-JWT_SECRET=my-super-secret-key
-JWT_EXPIRES_IN=1h
-```
-
-> Never commit your real `.env` file to GitHub.
-
-The project includes `.env` in `.gitignore`.
-
----
-
-## 4. Start the development server
-
-```bash
-npm run start:dev
-```
-
-The API will run at:
-
-```text
-http://localhost:3000
-```
-
----
-
-# Swagger Documentation
-
-Swagger provides interactive API documentation.
-
-After starting the server, open:
-
-```text
-http://localhost:3000/api
-```
-
-You can:
-
-- View available endpoints
-- View request bodies
-- View response structures
-- Test API endpoints
-- Authorize with a JWT
-- Test protected routes
-
----
-
-# Using Swagger
-
-## 1. Create a user
-
-Open:
-
-```text
-POST /users
-```
-
-Example:
-
-```json
-{
-  "name": "Ateeq",
-  "email": "ateeq@example.com",
-  "password": "123456"
-}
-```
-
----
-
-## 2. Login
-
-Open:
-
-```text
-POST /auth/login
-```
-
-Send:
-
-```json
-{
-  "email": "ateeq@example.com",
-  "password": "123456"
-}
-```
-
-You'll receive:
-
-```json
-{
-  "access_token": "YOUR_JWT_TOKEN"
-}
-```
-
----
-
-## 3. Authorize Swagger
-
-Click the **Authorize 🔒** button at the top of Swagger.
-
-Enter your JWT token.
-
-Swagger will then automatically send the token with protected requests.
-
----
-
-## 4. Create a task
-
-Open:
-
-```text
-POST /tasks
-```
-
-Send:
-
-```json
-{
-  "title": "Learn NestJS",
-  "description": "Finish Task Management API"
-}
-```
-
-The backend automatically associates the task with the logged-in user.
-
----
+Only explicitly exposed properties are returned.
 
 # API Endpoints
 
 ## Authentication
 
-| Method | Endpoint      | Authentication | Description           |
-| ------ | ------------- | -------------- | --------------------- |
-| `POST` | `/auth/login` | No             | Login and receive JWT |
-
----
+| Method | Endpoint      | Authentication |
+| ------ | ------------- | -------------- |
+| POST   | `/auth/login` | Public         |
 
 ## Users
 
-| Method   | Endpoint     | Authentication        | Description   |
-| -------- | ------------ | --------------------- | ------------- |
-| `POST`   | `/users`     | No                    | Create a user |
-| `GET`    | `/users`     | Yes                   | Get users     |
-| `GET`    | `/users/:id` | Depends on controller | Get user      |
-| `PATCH`  | `/users/:id` | Depends on controller | Update user   |
-| `DELETE` | `/users/:id` | Depends on controller | Delete user   |
-
----
+| Method | Endpoint     | Authentication |
+| ------ | ------------ | -------------- |
+| POST   | `/users`     | Public         |
+| GET    | `/users`     | JWT            |
+| GET    | `/users/:id` | API            |
+| PATCH  | `/users/:id` | API            |
+| DELETE | `/users/:id` | API            |
 
 ## Tasks
 
-| Method   | Endpoint     | Authentication | Description                |
-| -------- | ------------ | -------------- | -------------------------- |
-| `POST`   | `/tasks`     | Yes            | Create a task              |
-| `GET`    | `/tasks`     | Yes            | Get logged-in user's tasks |
-| `GET`    | `/tasks/:id` | Yes            | Get one of user's tasks    |
-| `PATCH`  | `/tasks/:id` | Yes            | Update a task              |
-| `DELETE` | `/tasks/:id` | Yes            | Delete a task              |
+| Method | Endpoint     | Authentication |
+| ------ | ------------ | -------------- |
+| POST   | `/tasks`     | JWT            |
+| GET    | `/tasks`     | JWT            |
+| GET    | `/tasks/:id` | JWT            |
+| PATCH  | `/tasks/:id` | JWT            |
+| DELETE | `/tasks/:id` | JWT            |
 
----
+# Example Workflow
 
-# Example API Flow
+### Register
 
-A normal user workflow looks like this:
-
-```text
-1. Register
-      ↓
+```http
 POST /users
-      ↓
-2. Login
-      ↓
-POST /auth/login
-      ↓
-3. Receive JWT
-      ↓
-Access Token
-      ↓
-4. Authorize
-      ↓
-Bearer JWT
-      ↓
-5. Create Task
-      ↓
-POST /tasks
-      ↓
-6. Get Tasks
-      ↓
-GET /tasks
-      ↓
-7. Update Task
-      ↓
-PATCH /tasks/:id
-      ↓
-8. Delete Task
-      ↓
-DELETE /tasks/:id
 ```
 
----
+```json
+{
+  "name": "ABC",
+  "email": "xyz@example.com",
+  "password": "123456"
+}
+```
 
-# Example: Creating a Task
+### Login
 
-The client sends:
+```http
+POST /auth/login
+```
+
+```json
+{
+  "email": "xyz@example.com",
+  "password": "123456"
+}
+```
+
+Response:
+
+```json
+{
+  "access_token": "your-jwt-token"
+}
+```
+
+### Create a Task
+
+Send the JWT in the Authorization header:
+
+```text
+Authorization: Bearer your-jwt-token
+```
+
+Then:
 
 ```http
 POST /tasks
-Authorization: Bearer <JWT>
 ```
-
-Request body:
 
 ```json
 {
   "title": "Learn NestJS",
-  "description": "Study controllers and services"
+  "description": "Complete the authentication module"
 }
 ```
 
-The backend gets the user ID from the JWT.
-
-For example:
-
-```text
-JWT user ID = 1
-```
-
-The resulting task internally becomes:
-
-```json
-{
-  "id": 1,
-  "title": "Learn NestJS",
-  "description": "Study controllers and services",
-  "completed": false,
-  "userId": 1,
-  "createdAt": "2026-09-27T16:30:00.000Z"
-}
-```
-
-The important part is that the client never had to provide:
-
-```json
-"userId": 1
-```
-
-The backend determines ownership from the authenticated user.
-
----
+The authenticated user's ID is automatically associated with the task.
 
 # Testing
 
-The API can be tested using:
+The project includes automated tests using Jest and NestJS testing utilities.
 
-### Swagger
+Run unit tests:
 
-```text
-http://localhost:3000/api
+```bash
+npm run test
 ```
 
-### Postman
+Run tests in watch mode:
 
-You can also use Postman to send HTTP requests manually.
-
-For protected endpoints, include:
-
-```http
-Authorization: Bearer <JWT>
+```bash
+npm run test:watch
 ```
 
----
+Run end-to-end tests:
 
-# Current Limitation
-
-The current version stores users and tasks in memory.
-
-For example:
-
-```ts
-private users: User[] = [];
+```bash
+npm run test:e2e
 ```
 
-and:
+# Current Project Limitation
 
-```ts
-private tasks: Task[] = [];
-```
+The current version uses **in-memory storage** for users and tasks.
 
-This means:
+This means data is reset whenever the application restarts.
 
-```text
-Start server
-    ↓
-Create users/tasks
-    ↓
-Restart server
-    ↓
-Data is gone
-```
-
-This is intentional for the current learning version.
-
-The next version can replace the in-memory arrays with a real database.
-
----
+This was intentionally kept simple for the initial implementation so the API architecture, authentication, authorization, validation and CRUD functionality could be developed and tested independently.
 
 # Future Improvements
 
-Possible future improvements include:
+Potential next steps include:
 
-- [ ] PostgreSQL database
-- [ ] Prisma or TypeORM
-- [ ] Persistent users and tasks
-- [ ] Refresh tokens
-- [ ] Better error handling
-- [ ] Pagination
-- [ ] Task filtering
-- [ ] Task search
-- [ ] User profile endpoint
-- [ ] Automated tests
-- [ ] Docker
-- [ ] Production deployment
-- [ ] CI/CD
-- [ ] Frontend application
-
-These features are intentionally not part of the current MVP.
-
----
+- PostgreSQL or another persistent database
+- TypeORM or Prisma integration
+- Database migrations
+- Refresh tokens
+- Role-based authorization
+- Pagination
+- Search and filtering
+- Task status management
+- Production deployment
+- Automated CI/CD
+- More comprehensive test coverage
 
 # What I Learned
 
-This project helped me understand the fundamentals of building a backend API with NestJS.
+This project provided hands-on experience with:
 
-### NestJS
-
-- Modules
+- NestJS modules
 - Controllers
+- Providers and dependency injection
 - Services
-- Dependency Injection
-- Guards
 - DTOs
-- Pipes
-- Exception handling
-
-### REST APIs
-
-- HTTP methods
-- Routes
-- Request bodies
-- Parameters
-- HTTP status codes
-- JSON responses
-
-### Authentication
-
+- Validation pipes
+- Guards
+- JWT authentication
+- Authorization
+- Passport strategies
 - Password hashing
-- Password verification
-- JWT
-- Passport
-- JWT strategies
-- Authentication guards
-
-### Authorization
-
-- Getting the authenticated user's ID
-- Associating resources with users
-- Preventing users from accessing other users' resources
-
-### Data Validation
-
-- `class-validator`
-- `ValidationPipe`
-- DTO-based validation
-
-### API Documentation
-
-- Swagger
-- Interactive API testing
-- Bearer authentication
-
----
+- Exception handling
+- Response transformation
+- Swagger/OpenAPI documentation
+- Environment variables
+- REST API design
+- Automated testing
 
 # Project Status
 
-**Core functionality: Complete**
+**Completed:** Core REST API, authentication, authorization, validation, CRUD operations and Swagger documentation.
 
-The project currently demonstrates a complete backend authentication and task-management flow.
+**Next stage:** Persistent database integration and production-oriented improvements.
 
-The next major technical step is replacing in-memory storage with a persistent database.
+# Author
 
----
+**Ateeq Malkani**
 
-## Author
-
-**Ateeq**
-
-Built as a learning and portfolio project while studying backend development with NestJS and TypeScript.
+Backend development project focused on NestJS and REST API development.
